@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import MovieCard from './MovieCard';
+import PropTypes from 'prop-types';
 
 const MovieList = ({ openDetails }) => {
   const [movies, setMovies] = useState([]);
@@ -14,13 +15,18 @@ const MovieList = ({ openDetails }) => {
       url: `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
       headers: {
         accept: 'application/json',
-        Authorization: `Bearer ${import.meta.env.TMDB_API_KEY}`,
+        Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
       },
     };
     axios
       .request(options)
       .then((res) => {
-        setMovies((prev) => [...prev, ...res.data.results]);
+        setMovies((prev) => {
+          const newMovies = res.data.results.filter(
+            (m) => !prev.some((p) => p.id === m.id)
+          );
+          return [...prev, ...newMovies];
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -52,31 +58,25 @@ const MovieList = ({ openDetails }) => {
     };
   }, [loading]);
 
-  function renderMovies() {
-    return movies.map(({ id, title, poster_path, vote_average }) => {
-      return (
+  return (
+    <div className='grid grid-cols-2 md:grid-cols-6 gap-4'>
+      {movies.map((movie) => (
         <MovieCard
-          key={id.toString()}
-          movieId={id.toString()}
-          title={title}
-          posterUrl={`https://image.tmdb.org/t/p/w500/${poster_path}`}
-          rating={vote_average}
+          key={movie.id.toString()}
+          movieId={movie.id.toString()}
+          title={movie.title}
+          posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+          rating={movie.vote_average}
           openDetails={openDetails}
         />
-      );
-    });
-  }
-
-  return (
-    <>
-      {renderMovies()}
+      ))}
       {loading && <div>Loading...</div>}
-    </>
+    </div>
   );
 };
 
 MovieList.propTypes = {
-  openDetails: () => {},
+  openDetails: PropTypes.func,
 };
 
 export default MovieList;

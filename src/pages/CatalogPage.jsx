@@ -1,5 +1,7 @@
+import MovieList from '../components/MovieList';
+
 const CatalogPage = () => {
-  return <p>Catalog Page</p>;
-}
+  return <MovieList />;
+};
 
 export default CatalogPage;
