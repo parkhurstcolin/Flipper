@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import MovieCard from '../components/MovieCard';
 import PropTypes from 'prop-types';
+import MovieCard from '../components/MovieCard';
+import useArrowNavigation from '../hooks/useArrowNavigation';
 
 const SearchPage = ({ openMovieDetails }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [, setSelected] = useState(null);
+  const selectedIndex = useArrowNavigation(results, setSelected);
 
   useEffect(() => {
     if (!query) {
@@ -82,15 +85,24 @@ const SearchPage = ({ openMovieDetails }) => {
 
       {results.length > 0 && (
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6'>
-          {results.map((movie) => (
-            <MovieCard
+          {results.map((movie, index) => (
+            <div
               key={movie.id}
-              movieId={movie.id.toString()}
-              title={movie.title}
-              posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-              rating={movie.vote_average}
-              openMovieDetails={openMovieDetails}
-            />
+              tabIndex={-1}
+              className={`transition transform ${
+                index === selectedIndex
+                  ? 'scale-105 ring-2 ring-yellow-500'
+                  : ''
+              }`}
+            >
+              <MovieCard
+                movieId={movie.id.toString()}
+                title={movie.title}
+                posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+                rating={movie.vote_average}
+                openMovieDetails={openMovieDetails}
+              />
+            </div>
           ))}
         </div>
       )}
