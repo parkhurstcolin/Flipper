@@ -2,10 +2,12 @@
   "name": "flipper",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://parkhurstcolin.github.io/Flipper/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
