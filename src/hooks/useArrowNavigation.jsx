@@ -19,21 +19,28 @@ export default function useArrowNavigation(items, onSelect) {
     (e) => {
       if (!items.length) return;
       setSelectedIndex((prev = 0) => {
-        let newIndex = prev
-        if (e.key === 'ArrowDown') {
-          newIndex = Math.min(prev + columns, items.length - 1);
-        } else if (e.key === 'ArrowUp') {
-          newIndex = Math.max(prev - columns, 0);
-        } else if (e.key === 'ArrowLeft') {
-          newIndex = Math.max(prev - 1, 0);
-        } else if (e.key === 'ArrowRight') {
-          newIndex = Math.min(prev + 1, items.length - 1);
+        let newIndex = prev;
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (prev != null && items[prev]) {
+            onSelect(items[prev], 'confirm');
+          }
+        } else {
+          if (e.key === 'ArrowDown') {
+            newIndex = Math.min(prev + columns, items.length - 1);
+          } else if (e.key === 'ArrowUp') {
+            newIndex = Math.max(prev - columns, 0);
+          } else if (e.key === 'ArrowLeft') {
+            newIndex = Math.max(prev - 1, 0);
+          } else if (e.key === 'ArrowRight') {
+            newIndex = Math.min(prev + 1, items.length - 1);
+          }
+
+          onSelect(newIndex);
+          return newIndex;
         }
-        onSelect(newIndex);
-        return newIndex;
-      })
+      });
     },
-    [columns, items.length, onSelect]
+    [columns, items, onSelect]
   );
 
   useEffect(() => {

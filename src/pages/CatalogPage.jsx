@@ -10,6 +10,13 @@ const CatalogPage = ({ openMovieDetails }) => {
   const [loading, setLoading] = useState(false);
   const [, setSelected] = useState(null);
 
+  const handleSelect = (movie, type) => {
+    if (type === 'confirm') {
+      openMovieDetails(`movie/${movie.movieId}`);
+    } else {
+      setSelected(movie);
+    }
+  };
   const selectedIndex = useArrowNavigation(movies, setSelected);
 
   useEffect(() => {
@@ -71,6 +78,7 @@ const CatalogPage = ({ openMovieDetails }) => {
           className={`transition transform ${
             index === selectedIndex ? 'scale-105 ring-2 ring-yellow-500' : ''
           }`}
+          onClick={() => handleSelect(movie, 'confirm')}
         >
           <MovieCard
             movieId={movie.id}
