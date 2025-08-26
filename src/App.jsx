@@ -9,7 +9,12 @@ const App = () => {
   function renderPage() {
     if (currentPage.startsWith('movie/')) {
       const movieId = currentPage.split('/');
-      return <MovieDetailPage movieId={movieId[1]} />;
+      return (
+        <MovieDetailPage
+          movieId={movieId[1]}
+          openMovieDetails={setCurrentPage}
+        />
+      );
     } else if (currentPage === 'search') {
       return <SearchPage />;
     } else {
@@ -17,10 +22,10 @@ const App = () => {
     }
   }
   return (
-    <>
+    <div className='min-h-screen bg-gray-900 text-white'>
       <Header setCurrentPage={setCurrentPage} />
-      {renderPage()}
-    </>
+      <div className='pt-20 px-4'>{renderPage()}</div>
+    </div>
   );
 };
 
