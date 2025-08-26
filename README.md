@@ -1,4 +1,4 @@
-# React + Vite
+React + Vite
 
 Flipper - Movie scroller app.
 
