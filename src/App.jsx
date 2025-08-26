@@ -16,7 +16,7 @@ const App = () => {
         />
       );
     } else if (currentPage === 'search') {
-      return <SearchPage />;
+      return <SearchPage openMovieDetails={setCurrentPage} />;
     } else {
       return <CatalogPage openMovieDetails={setCurrentPage} />;
     }

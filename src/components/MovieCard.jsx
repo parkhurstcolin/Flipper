@@ -14,7 +14,7 @@ const MovieCard = ({ movieId, title, posterURL, rating, openMovieDetails }) => {
         <span className='text-yellow-400 font-semibold'>
           ⭐ {rating?.toFixed(1)} / 10
         </span>
-        <p className='text-gray-100 font-medium mt-1 truncate'>{title}</p>
+        <p className='text-gray-100 font-medium mt-1'>{title}</p>
         <button
           className='mt-2 px-3 py-1 bg-yellow-500 text-gray-900 font-semibold rounded hover:bg-yellow-600 transition'
           onClick={() => openMovieDetails(`movie/${movieId}`)}
