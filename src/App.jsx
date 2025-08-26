@@ -1,8 +1,11 @@
+import Header from './Header';
+
 const App = () => {
-  return <div className='container'>
-    <h1>New App</h1>
-    <p>No CSS</p>
-  </div>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 };
 
 export default App;
