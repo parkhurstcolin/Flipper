@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import MovieCard from './MovieCard';
 import PropTypes from 'prop-types';
 
-const MovieList = ({ openDetails }) => {
+const MovieList = ({ openMovieDetails }) => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -67,7 +67,7 @@ const MovieList = ({ openDetails }) => {
           title={movie.title}
           posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
           rating={movie.vote_average}
-          openDetails={openDetails}
+          openMovieDetails={openMovieDetails}
         />
       ))}
       {loading && <div>Loading...</div>}
@@ -76,7 +76,7 @@ const MovieList = ({ openDetails }) => {
 };
 
 MovieList.propTypes = {
-  openDetails: PropTypes.func,
+  openMovieDetails: PropTypes.func,
 };
 
 export default MovieList;
