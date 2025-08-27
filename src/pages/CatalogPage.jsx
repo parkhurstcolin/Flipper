@@ -12,7 +12,7 @@ const CatalogPage = ({ openMovieDetails }) => {
 
   const handleSelect = (movie, type) => {
     if (type === 'confirm') {
-      openMovieDetails(`movie/${movie.movieId}`);
+      openMovieDetails(`movie/${movie.id}`);
     } else {
       setSelected(movie);
     }
