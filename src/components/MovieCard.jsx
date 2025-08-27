@@ -9,7 +9,6 @@ const MovieCard = ({ movieId, title, posterURL, rating, openMovieDetails }) => {
         alt={title}
         className='w-full h-64 object-cover rounded-t-lg'
       />
-
       <div className='p-2 text-center'>
         <span className='text-yellow-400 text-md'>
           ⭐ {rating?.toFixed(1)} / 10

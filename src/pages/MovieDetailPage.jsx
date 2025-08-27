@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
+import { fetchMovie, fetchSimilarMovies } from '../api/tmdb';
 
 const MovieDetailPage = ({
   movieId,
@@ -13,42 +13,15 @@ const MovieDetailPage = ({
   const [similarMovies, setSimilarMovies] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
+    async function fetchMovieData() {
+      setLoading(true);
 
-    const headers = {
-      accept: 'application/json',
-      Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
-    };
-    const options = {
-      method: 'GET',
-      url: `https://api.themoviedb.org/3/movie/${movieId}?language=en-US`,
-      headers,
-    };
-    axios
-      .request(options)
-      .then((res) => {
-        setMovie(res.data);
+      setMovie(await fetchMovie(movieId));
+      setSimilarMovies(await fetchSimilarMovies(movieId));
 
-        const similarOptions = {
-          method: 'GET',
-          url: `https://api.themoviedb.org/3/movie/${movieId}/similar?language=en-US`,
-          headers,
-        };
-        axios
-          .request(similarOptions)
-          .then((res) => {
-            setSimilarMovies(res.data.results);
-          })
-          .catch((err) => {
-            console.warn('Similar movies fetch failed:', err);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      })
-      .catch(() => {
-        throw new Error('No Movie Was Found');
-      });
+      setLoading(false);
+    }
+    fetchMovieData();
   }, [movieId, setLoading]);
 
   if (loading) return <p>Loading...</p>;
