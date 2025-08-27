@@ -3,10 +3,9 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
 
-const SearchPage = ({ openMovieDetails }) => {
+const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -37,7 +36,7 @@ const SearchPage = ({ openMovieDetails }) => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [query, page]);
+  }, [query, page, setLoading]);
 
   useEffect(() => {
     let timer;
@@ -96,6 +95,8 @@ const SearchPage = ({ openMovieDetails }) => {
 
 SearchPage.propTypes = {
   openMovieDetails: PropTypes.func,
+  loading: PropTypes.bool,
+  setLoading: PropTypes.func,
 };
 
 export default SearchPage;

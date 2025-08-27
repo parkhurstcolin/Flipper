@@ -3,10 +3,9 @@ import axios from 'axios';
 import MovieCardGrid from '../components/MovieCardGrid';
 import PropTypes from 'prop-types';
 
-const CatalogPage = ({ openMovieDetails }) => {
+const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +33,7 @@ const CatalogPage = ({ openMovieDetails }) => {
       });
 
     return () => {};
-  }, [page]);
+  }, [page, setLoading]);
 
   return (
     <div className='w-full max-w-6xl mx-auto px-4'>
@@ -52,6 +51,8 @@ const CatalogPage = ({ openMovieDetails }) => {
 };
 
 CatalogPage.propTypes = {
+  loading: PropTypes.bool,
   openMovieDetails: PropTypes.func,
+  setLoading: PropTypes.func
 };
 export default CatalogPage;

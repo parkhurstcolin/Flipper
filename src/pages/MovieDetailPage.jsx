@@ -3,10 +3,14 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
 
-const MovieDetailPage = ({ movieId, openMovieDetails }) => {
+const MovieDetailPage = ({
+  movieId,
+  openMovieDetails,
+  loading,
+  setLoading,
+}) => {
   const [movie, setMovie] = useState({});
   const [similarMovies, setSimilarMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -45,7 +49,7 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
       .catch(() => {
         throw new Error('No Movie Was Found');
       });
-  }, [movieId]);
+  }, [movieId, setLoading]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -112,6 +116,8 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
 MovieDetailPage.propTypes = {
   movieId: PropTypes.string,
   openMovieDetails: PropTypes.func,
+  loading: PropTypes.bool,
+  setLoading: PropTypes.func,
 };
 
 export default MovieDetailPage;
