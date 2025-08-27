@@ -13,15 +13,16 @@ const MovieDetailPage = ({
   const [similarMovies, setSimilarMovies] = useState([]);
 
   useEffect(() => {
-    async function fetchMovieData() {
-      setLoading(true);
+    setLoading(true);
 
+    async function fetchMovieData() {
       setMovie(await fetchMovie(movieId));
       setSimilarMovies(await fetchSimilarMovies(movieId));
-
-      setLoading(false);
     }
+
     fetchMovieData();
+
+    setLoading(false);
   }, [movieId, setLoading]);
 
   if (loading) return <p>Loading...</p>;

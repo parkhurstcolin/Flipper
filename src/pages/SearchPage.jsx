@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
+import { searchMovies } from '../api/tmdb';
 
 const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
   const [query, setQuery] = useState('');
@@ -16,23 +16,17 @@ const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
 
     const timer = setTimeout(() => {
       setLoading(true);
-      axios
-        .request({
-          method: 'GET',
-          url: `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=${page}`,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
-          },
-        })
-        .then((res) => {
-          setResults((prev) =>
-            page === 1 ? res.data.results : [...prev, ...res.data.results]
-          );
-          setLoading(false);
-        })
-        .catch((err) => console.error(err))
-        .finally(() => setLoading(false));
+
+      async function searchMovieData() {
+        const searchResults = await searchMovies(query, page);
+        setResults((prev) =>
+          page === 1 ? searchResults : [...prev, ...searchResults]
+        );
+      }
+
+      searchMovieData();
+
+      setLoading(false);
     }, 500);
 
     return () => clearTimeout(timer);

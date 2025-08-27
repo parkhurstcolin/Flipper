@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import MovieCardGrid from '../components/MovieCardGrid';
 import PropTypes from 'prop-types';
+import { fetchPopularMovies } from '../api/tmdb';
 
 const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
   const [movies, setMovies] = useState([]);
@@ -9,28 +9,21 @@ const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
 
   useEffect(() => {
     setLoading(true);
-    const options = {
-      method: 'GET',
-      url: `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
-      },
-    };
-    axios
-      .request(options)
-      .then((res) => {
-        setMovies((prev) => {
-          const newMovies = res.data.results.filter(
-            (m) => !prev.some((p) => p.id === m.id)
-          );
-          return [...prev, ...newMovies];
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        throw new Error(err);
+
+    async function fetchMovies() {
+      const fetchedMovies = await fetchPopularMovies(page);
+
+      setMovies((prev) => {
+        const newMovies = fetchedMovies.filter(
+          (m) => !prev.some((p) => p.id === m.id)
+        );
+        return [...prev, ...newMovies];
       });
+    }
+
+    fetchMovies();
+
+    setLoading(false);
 
     return () => {};
   }, [page, setLoading]);
@@ -53,6 +46,6 @@ const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
 CatalogPage.propTypes = {
   loading: PropTypes.bool,
   openMovieDetails: PropTypes.func,
-  setLoading: PropTypes.func
+  setLoading: PropTypes.func,
 };
 export default CatalogPage;
