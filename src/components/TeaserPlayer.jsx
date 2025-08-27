@@ -36,6 +36,7 @@ const TeaserPlayer = ({ videoKey, onReady }) => {
 
 TeaserPlayer.propTypes = {
   videoKey: PropTypes.string,
+  onReady: PropTypes.any,
 };
 
 export default TeaserPlayer;

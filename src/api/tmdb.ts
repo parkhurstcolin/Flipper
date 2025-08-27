@@ -44,7 +44,12 @@ export const fetchMovieTeaser = async (movieId: string) => {
   try {
     const searchResults = await axios.request(options);
     const videos = searchResults.data.results;
-    return videos.filter((video: { type: string }) => video.type === 'Teaser');
+    const teasers = videos.filter(
+      (video: { type: string }) => video.type === 'Teaser'
+    );
+    return teasers.length > 0
+      ? teasers
+      : videos.filter((video: { type: string }) => video.type === 'Trailer');
   } catch (err) {
     throw new Error('No results found', err);
   }
