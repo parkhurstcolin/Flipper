@@ -1,23 +1,12 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import axios from 'axios';
-import MovieCard from '../components/MovieCard';
-import useArrowNavigation from '../hooks/useArrowNavigation';
+import MovieCardGrid from '../components/MovieCardGrid';
+import PropTypes from 'prop-types';
 
 const CatalogPage = ({ openMovieDetails }) => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [, setSelected] = useState(null);
-
-  const handleSelect = (movie, type) => {
-    if (type === 'confirm') {
-      openMovieDetails(`movie/${movie.id}`);
-    } else {
-      setSelected(movie);
-    }
-  };
-  const selectedIndex = useArrowNavigation(movies, setSelected);
 
   useEffect(() => {
     setLoading(true);
@@ -47,55 +36,22 @@ const CatalogPage = ({ openMovieDetails }) => {
     return () => {};
   }, [page]);
 
-  useEffect(() => {
-    let timer;
-    const handleScroll = () => {
-      if (
-        !loading &&
-        window.scrollY + window.innerHeight >=
-          document.documentElement.scrollHeight - 150
-      ) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          setPage((prev) => prev + 1);
-        }, 100);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
-    };
-  }, [loading]);
-
   return (
-    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6'>
-      {movies.map((movie, index) => (
-        <div
-          key={movie.id}
-          tabIndex={-1}
-          className={`transition transform ${
-            index === selectedIndex ? 'scale-105 ring-2 ring-yellow-500' : ''
-          }`}
-          onClick={() => handleSelect(movie, 'confirm')}
-        >
-          <MovieCard
-            movieId={movie.id}
-            title={movie.title}
-            posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-            rating={movie.vote_average}
-            openMovieDetails={openMovieDetails}
-          />
-        </div>
-      ))}
-      {loading && <div>Loading...</div>}
-    </div>
+    <>
+      {loading && <p className='text-center text-gray-400 mt-4'>Loading...</p>}
+      {movies.length > 0 && (
+        <MovieCardGrid
+          openMovieDetails={openMovieDetails}
+          movies={movies}
+          loading={loading}
+          setPage={setPage}
+        />
+      )}
+    </>
   );
 };
 
 CatalogPage.propTypes = {
   openMovieDetails: PropTypes.func,
 };
-
 export default CatalogPage;

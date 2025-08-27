@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import MovieCard from '../components/MovieCard';
+import MovieCardGrid from '../components/MovieCardGrid';
 
 const MovieDetailPage = ({ movieId, openMovieDetails }) => {
   const [movie, setMovie] = useState({});
@@ -88,7 +88,19 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
         <h2 className='text-2xl font-semibold mt-12 mb-4 z-10 relative'>
           Similar Movies
         </h2>
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
+
+        {loading && (
+          <p className='text-center text-gray-400 mt-4'>Loading...</p>
+        )}
+
+        {similarMovies.length > 0 && (
+          <MovieCardGrid
+            openMovieDetails={openMovieDetails}
+            movies={similarMovies}
+            loading={loading}
+          />
+        )}
+        {/* <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
           {similarMovies.map((m) => (
             <MovieCard
               key={m.id}
@@ -99,7 +111,7 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
               openMovieDetails={openMovieDetails}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
