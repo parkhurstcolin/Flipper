@@ -4,10 +4,10 @@ const Header = ({ setCurrentPage }) => {
       <a href='/Flipper/' className='flex' title='Dashboard'>
         <img
           src='https://raw.githubusercontent.com/parkhurstcolin/Flipper/refs/heads/main/docs/assets/flipper.png'
-          width='64'
+          width='96'
         />
       </a>
-      <div className='flex flex-row items-center gap-4 md:gap-8 h-8'>
+      <div className='flex flex-row items-center gap-4 md:gap-8 h-8 text-xl'>
         <button title='catalog' onClick={() => setCurrentPage('catalog')}>
           Feed
         </button>

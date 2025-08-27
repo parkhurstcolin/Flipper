@@ -22,7 +22,7 @@ const App = () => {
     }
   }
   return (
-    <div className='min-h-screen bg-gray-900 text-white'>
+    <div className='min-h-screen bg-gray-900 text-white font-bold'>
       <Header setCurrentPage={setCurrentPage} />
       <div className='pt-20 px-4'>{renderPage()}</div>
     </div>

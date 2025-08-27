@@ -81,12 +81,14 @@ const SearchPage = ({ openMovieDetails }) => {
       {loading && <p className='text-center text-gray-400 mt-4'>Loading...</p>}
 
       {results.length > 0 && (
-        <MovieCardGrid
-          openMovieDetails={openMovieDetails}
-          movies={results}
-          loading={loading}
-          setPage={setPage}
-        />
+        <div className='w-full max-w-6xl mx-auto px-4'>
+          <MovieCardGrid
+            openMovieDetails={openMovieDetails}
+            movies={results}
+            loading={loading}
+            setPage={setPage}
+          />
+        </div>
       )}
     </div>
   );

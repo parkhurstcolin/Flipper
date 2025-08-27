@@ -18,7 +18,7 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
     const options = {
       method: 'GET',
       url: `https://api.themoviedb.org/3/movie/${movieId}?language=en-US`,
-      headers: headers,
+      headers,
     };
     axios
       .request(options)
@@ -28,7 +28,7 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
         const similarOptions = {
           method: 'GET',
           url: `https://api.themoviedb.org/3/movie/${movieId}/similar?language=en-US`,
-          headers: headers,
+          headers,
         };
         axios
           .request(similarOptions)
@@ -57,7 +57,7 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
           backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdrop_path})`,
         }}
       />
-      <div className='relative max-w-5xl mx-auto px-6 py-20'>
+      <div className='relative max-w mx-auto px-6 py-20'>
         <div className='flex flex-col md:flex-row gap-8'>
           <img
             src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
@@ -72,10 +72,12 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
               </span>
             </h1>
             {movie.tagline && (
-              <p className='italic text-gray-300 mt-1'>{movie.tagline}</p>
+              <p className='italic text-gray-300 mt-1 text-md'>
+                {movie.tagline}
+              </p>
             )}
             <p className='mt-4 text-lg leading-relaxed'>{movie.overview}</p>
-            <div className='mt-6 flex flex-wrap gap-4 text-sm text-gray-300'>
+            <div className='mt-6 flex flex-wrap gap-4 text-md text-gray-300'>
               <span>⭐ {movie.vote_average?.toFixed(1)} / 10</span>
               <span>
                 ⏱ {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
@@ -94,24 +96,14 @@ const MovieDetailPage = ({ movieId, openMovieDetails }) => {
         )}
 
         {similarMovies.length > 0 && (
-          <MovieCardGrid
-            openMovieDetails={openMovieDetails}
-            movies={similarMovies}
-            loading={loading}
-          />
-        )}
-        {/* <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
-          {similarMovies.map((m) => (
-            <MovieCard
-              key={m.id}
-              movieId={m.id.toString()}
-              title={m.title}
-              posterURL={`https://image.tmdb.org/t/p/w500/${m.poster_path}`}
-              rating={m.vote_average}
+          <div className='w-full max-w-6xl mx-auto px-4'>
+            <MovieCardGrid
               openMovieDetails={openMovieDetails}
+              movies={similarMovies}
+              loading={loading}
             />
-          ))}
-        </div> */}
+          </div>
+        )}
       </div>
     </div>
   );

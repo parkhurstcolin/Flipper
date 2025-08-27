@@ -13,37 +13,40 @@ const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
         setSelected(movie);
       }
     };
-    const selectedIndex = useArrowNavigation(movies, setSelected);
+    const selectedIndex = useArrowNavigation(movies, handleSelect);
 
     useEffect(() => {
-    let timer;
-    const handleScroll = () => {
-      if (
-        !loading &&
-        window.scrollY + window.innerHeight >=
-          document.documentElement.scrollHeight - 150
-      ) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          setPage((prev) => prev + 1);
-        }, 100);
-      }
-    };
+      let timer;
+      const handleScroll = () => {
+        if (
+          !loading &&
+          window.scrollY + window.innerHeight >=
+            document.documentElement.scrollHeight - 150
+        ) {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            setPage((prev) => prev + 1);
+          }, 100);
+        }
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
-    };
-  }, [loading, setPage]);
-  
-  return <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6'>
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        clearTimeout(timer);
+      };
+    }, [loading, setPage]);
+
+    return (
+      <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 content-center'>
         {movies.map((movie, index) => (
           <div
             key={movie.id}
             tabIndex={-1}
-            className={`transition transform ${
-              index === selectedIndex ? 'scale-105 ring-2 ring-yellow-500' : ''
+            className={`transition transform p-2 ${
+              index === selectedIndex
+                ? 'scale-105 ring-2 ring-yellow-500 rounded-md'
+                : ''
             }`}
             onClick={() => handleSelect(movie, 'confirm')}
           >
@@ -58,6 +61,7 @@ const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
         ))}
         {loading && <div>Loading...</div>}
       </div>
+    );
 }
 
 MovieCardGrid.propTypes = {

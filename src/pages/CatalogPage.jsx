@@ -37,7 +37,7 @@ const CatalogPage = ({ openMovieDetails }) => {
   }, [page]);
 
   return (
-    <>
+    <div className='w-full max-w-6xl mx-auto px-4'>
       {loading && <p className='text-center text-gray-400 mt-4'>Loading...</p>}
       {movies.length > 0 && (
         <MovieCardGrid
@@ -47,7 +47,7 @@ const CatalogPage = ({ openMovieDetails }) => {
           setPage={setPage}
         />
       )}
-    </>
+    </div>
   );
 };
 

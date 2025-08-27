@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
 function getColumns(width) {
-  if (width >= 1024) return 6;
-  if (width >= 768) return 4;
-  if (width >= 640) return 3;
+  if (width >= 1280) return 4;
+  if (width >= 1024) return 3;
   return 2;
 }
-export default function useArrowNavigation(items, onSelect) {
+export default function useArrowNavigation(items, handleSelect) {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [columns, setColumns] = useState(getColumns(window.innerWidth));
 
@@ -22,7 +21,7 @@ export default function useArrowNavigation(items, onSelect) {
         let newIndex = prev;
         if (e.key === 'Enter' || e.key === ' ') {
           if (prev != null && items[prev]) {
-            onSelect(items[prev], 'confirm');
+            handleSelect(items[newIndex], 'confirm');
           }
         } else {
           if (e.key === 'ArrowDown') {
@@ -35,12 +34,12 @@ export default function useArrowNavigation(items, onSelect) {
             newIndex = Math.min(prev + 1, items.length - 1);
           }
 
-          onSelect(newIndex);
+          handleSelect(newIndex);
           return newIndex;
         }
       });
     },
-    [columns, items, onSelect]
+    [columns, items, handleSelect]
   );
 
   useEffect(() => {
