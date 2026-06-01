@@ -13,16 +13,29 @@ const MovieDetailPage = ({
   const [similarMovies, setSimilarMovies] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
 
     async function fetchMovieData() {
-      setMovie(await fetchMovie(movieId));
-      setSimilarMovies(await fetchSimilarMovies(movieId));
+      setLoading(true);
+      try {
+        const [movieData, similar] = await Promise.all([
+          fetchMovie(movieId),
+          fetchSimilarMovies(movieId),
+        ]);
+        if (cancelled) return;
+
+        setMovie(movieData);
+        setSimilarMovies(similar);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
     fetchMovieData();
 
-    setLoading(false);
+    return () => {
+      cancelled = true;
+    };
   }, [movieId, setLoading]);
 
   if (loading) return <p>Loading...</p>;

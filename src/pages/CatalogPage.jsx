@@ -8,24 +8,30 @@ const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
 
     async function fetchMovies() {
-      const fetchedMovies = await fetchPopularMovies(page);
+      setLoading(true);
+      try {
+        const fetchedMovies = await fetchPopularMovies(page);
+        if (cancelled) return;
 
-      setMovies((prev) => {
-        const newMovies = fetchedMovies.filter(
-          (m) => !prev.some((p) => p.id === m.id)
-        );
-        return [...prev, ...newMovies];
-      });
+        setMovies((prev) => {
+          const newMovies = fetchedMovies.filter(
+            (m) => !prev.some((p) => p.id === m.id)
+          );
+          return [...prev, ...newMovies];
+        });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
     fetchMovies();
 
-    setLoading(false);
-
-    return () => {};
+    return () => {
+      cancelled = true;
+    };
   }, [page, setLoading]);
 
   return (

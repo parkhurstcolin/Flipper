@@ -14,22 +14,30 @@ const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setLoading(true);
+    let cancelled = false;
 
+    const timer = setTimeout(() => {
       async function searchMovieData() {
-        const searchResults = await searchMovies(query, page);
-        setResults((prev) =>
-          page === 1 ? searchResults : [...prev, ...searchResults]
-        );
+        setLoading(true);
+        try {
+          const searchResults = await searchMovies(query, page);
+          if (cancelled) return;
+
+          setResults((prev) =>
+            page === 1 ? searchResults : [...prev, ...searchResults]
+          );
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
       }
 
       searchMovieData();
-
-      setLoading(false);
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [query, page, setLoading]);
 
   useEffect(() => {
