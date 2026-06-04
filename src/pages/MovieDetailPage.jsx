@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
+import Loading from '../components/Loading';
 import { fetchMovie, fetchSimilarMovies } from '../api/tmdb';
 
 const MovieDetailPage = ({
@@ -38,7 +39,7 @@ const MovieDetailPage = ({
     };
   }, [movieId, setLoading]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   return (
     <div className='relative min-h-screen bg-gray-900 text-white'>
@@ -48,7 +49,7 @@ const MovieDetailPage = ({
           backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdrop_path})`,
         }}
       />
-      <div className='relative max-w mx-auto px-6 py-20'>
+      <div className='relative max-w-6xl mx-auto px-6 py-20'>
         <div className='flex flex-col md:flex-row gap-8'>
           <img
             src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
@@ -82,18 +83,14 @@ const MovieDetailPage = ({
           Similar Movies
         </h2>
 
-        {loading && (
-          <p className='text-center text-gray-400 mt-4'>Loading...</p>
-        )}
+        {loading && <Loading inline />}
 
         {similarMovies.length > 0 && (
-          <div className='w-full max-w-6xl mx-auto px-4'>
-            <MovieCardGrid
-              openMovieDetails={openMovieDetails}
-              movies={similarMovies}
-              loading={loading}
-            />
-          </div>
+          <MovieCardGrid
+            openMovieDetails={openMovieDetails}
+            movies={similarMovies}
+            loading={loading}
+          />
         )}
       </div>
     </div>

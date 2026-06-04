@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types"
 import MovieCard from "./MovieCard"
+import Loading from "./Loading";
 import useArrowNavigation from '../hooks/useArrowNavigation';
 
 const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
@@ -43,9 +44,9 @@ const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
           <div
             key={movie.id}
             tabIndex={-1}
-            className={`transition transform p-2 ${
+            className={`p-2 transition-transform duration-200 ease-out hover:scale-[1.03] ${
               index === selectedIndex
-                ? 'scale-105 ring-2 ring-yellow-500 rounded-md'
+                ? 'scale-[1.03] ring-2 ring-accent rounded-md'
                 : ''
             }`}
             onClick={() => handleSelect(movie, 'confirm')}
@@ -59,7 +60,11 @@ const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
             />
           </div>
         ))}
-        {loading && <div>Loading...</div>}
+        {loading && (
+          <div className='col-span-full'>
+            <Loading inline />
+          </div>
+        )}
       </div>
     );
 }

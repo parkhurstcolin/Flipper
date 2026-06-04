@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Standard centered page column with horizontal padding */
+  .page-container {
+    @apply w-full max-w-6xl mx-auto px-4;
+  }
+}
+
+/* Vertical snap feed (landing): hide the scrollbar for a clean full-bleed look */
+.feed {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.feed::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Background teaser videos.
+ * Size the YouTube iframe to cover the viewport (no letterbox bars) and scale
+ * it slightly so the player chrome (title bar, branding) is cropped off-screen.
+ */
+.teaser-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.teaser-bg iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw; /* 16:9 of full width */
+  min-height: 100vh;
+  min-width: 177.78vh; /* 16:9 of full height */
+  transform: translate(-50%, -50%) scale(1.15);
+  pointer-events: none;
+}

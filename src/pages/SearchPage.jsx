@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import MovieCardGrid from '../components/MovieCardGrid';
+import Loading from '../components/Loading';
 import { searchMovies } from '../api/tmdb';
 
 const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
@@ -63,7 +64,7 @@ const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
   }, [loading]);
 
   return (
-    <div className='px-4 py-6 max-w-6xl mx-auto'>
+    <div className='page-container py-6'>
       <input
         type='text'
         value={query}
@@ -72,24 +73,22 @@ const SearchPage = ({ openMovieDetails, loading, setLoading }) => {
           setPage(1);
         }}
         placeholder='Search movies...'
-        className='w-full md:w-1/2 p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 shadow focus:outline-none focus:ring-2 focus:ring-yellow-500 transition'
+        className='w-full md:w-1/2 p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 shadow focus:outline-none focus:ring-2 focus:ring-accent transition-shadow duration-200 ease-out'
       />
       {results.length === 0 && query && (
         <h2 className='text-center text-gray-300 mt-8 text-xl'>
           No results found
         </h2>
       )}
-      {loading && <p className='text-center text-gray-400 mt-4'>Loading...</p>}
+      {loading && <Loading inline />}
 
       {results.length > 0 && (
-        <div className='w-full max-w-6xl mx-auto px-4'>
-          <MovieCardGrid
-            openMovieDetails={openMovieDetails}
-            movies={results}
-            loading={loading}
-            setPage={setPage}
-          />
-        </div>
+        <MovieCardGrid
+          openMovieDetails={openMovieDetails}
+          movies={results}
+          loading={loading}
+          setPage={setPage}
+        />
       )}
     </div>
   );

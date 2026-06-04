@@ -41,10 +41,20 @@ const App = () => {
     }
   }
 
+  // The LandingPage is a full-viewport fullpage.js scroller and must own the
+  // entire screen from y=0. The other pages need top padding to clear the
+  // fixed header. Applying that padding to the landing page offsets fullpage's
+  // sections, which makes every scroll rest between two movies.
+  const isLanding = !(
+    currentPage.startsWith('movie/') ||
+    currentPage === 'search' ||
+    currentPage === 'catalog'
+  );
+
   return (
-    <div className='min-h-screen bg-gray-900 text-white font-bold'>
+    <div className='min-h-screen bg-gray-900 text-white'>
       <Header setCurrentPage={setCurrentPage} />
-      <div className='pt-20 px-4'>{renderPage()}</div>
+      <div className={isLanding ? '' : 'pt-20 px-4'}>{renderPage()}</div>
     </div>
   );
 };

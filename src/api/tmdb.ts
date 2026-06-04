@@ -43,13 +43,16 @@ export const fetchMovieTeaser = async (movieId: string) => {
 
   try {
     const searchResults = await axios.request(options);
-    const videos = searchResults.data.results;
-    const teasers = videos.filter(
+    // Only YouTube videos can play in the embedded teaser player.
+    const youtube = searchResults.data.results.filter(
+      (video: { site: string }) => video.site === 'YouTube'
+    );
+    const teasers = youtube.filter(
       (video: { type: string }) => video.type === 'Teaser'
     );
     return teasers.length > 0
       ? teasers
-      : videos.filter((video: { type: string }) => video.type === 'Trailer');
+      : youtube.filter((video: { type: string }) => video.type === 'Trailer');
   } catch (err) {
     throw new Error('No results found', err);
   }

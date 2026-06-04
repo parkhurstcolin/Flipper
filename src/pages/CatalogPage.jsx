@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import MovieCardGrid from '../components/MovieCardGrid';
+import Loading from '../components/Loading';
 import PropTypes from 'prop-types';
 import { fetchPopularMovies } from '../api/tmdb';
 
@@ -35,8 +36,8 @@ const CatalogPage = ({ openMovieDetails, loading, setLoading }) => {
   }, [page, setLoading]);
 
   return (
-    <div className='w-full max-w-6xl mx-auto px-4'>
-      {loading && <p className='text-center text-gray-400 mt-4'>Loading...</p>}
+    <div className='page-container'>
+      {loading && <Loading inline />}
       {movies.length > 0 && (
         <MovieCardGrid
           openMovieDetails={openMovieDetails}
