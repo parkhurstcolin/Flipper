@@ -15,7 +15,7 @@ export const fetchMovie = async (movieId: string) => {
     const fetchedMovie = await axios.request(options);
     return fetchedMovie.data;
   } catch (err) {
-    throw new Error('Failed to find movie', err);
+    throw new Error('Failed to find movie', { cause: err });
   }
 };
 
@@ -30,7 +30,7 @@ export const searchMovies = async (query: string, page: number) => {
     const searchResults = await axios.request(options);
     return searchResults.data.results;
   } catch (err) {
-    throw new Error('No results found', err);
+    throw new Error('No results found', { cause: err });
   }
 };
 
@@ -43,7 +43,6 @@ export const fetchMovieTeaser = async (movieId: string) => {
 
   try {
     const searchResults = await axios.request(options);
-    // Only YouTube videos can play in the embedded teaser player.
     const youtube = searchResults.data.results.filter(
       (video: { site: string }) => video.site === 'YouTube'
     );
@@ -54,7 +53,7 @@ export const fetchMovieTeaser = async (movieId: string) => {
       ? teasers
       : youtube.filter((video: { type: string }) => video.type === 'Trailer');
   } catch (err) {
-    throw new Error('No results found', err);
+    throw new Error('No results found', { cause: err });
   }
 };
 
@@ -101,5 +100,35 @@ export const fetchSimilarMovies = async (movieId: string) => {
   } catch (err) {
     console.error(err);
     return [];
+  }
+};
+
+export const fetchMovieCredits = async (movieId: string) => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/movie/${movieId}/credits?language=en-US`,
+    headers,
+  };
+  try {
+    const credits = await axios.request(options);
+    return credits.data;
+  } catch (err) {
+    console.error(err);
+    return { cast: [], crew: [] };
+  }
+};
+
+export const fetchWatchProviders = async (movieId: string) => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/movie/${movieId}/watch/providers`,
+    headers,
+  };
+  try {
+    const providers = await axios.request(options);
+    return providers.data.results;
+  } catch (err) {
+    console.error(err);
+    return {};
   }
 };

@@ -6,8 +6,16 @@ import MovieDetailPage from './pages/MovieDetailPage';
 import LandingPage from './pages/LandingPage';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('landing'); // default to landing
+  const [currentPage, setCurrentPage] = useState('landing');
+  const [previousPage, setPreviousPage] = useState('catalog');
   const [loading, setLoading] = useState(false);
+
+  const navigate = (page) => {
+    if (page.startsWith('movie/') && !currentPage.startsWith('movie/')) {
+      setPreviousPage(currentPage === 'landing' ? 'catalog' : currentPage);
+    }
+    setCurrentPage(page);
+  };
 
   function renderPage() {
     if (currentPage.startsWith('movie/')) {
@@ -15,7 +23,8 @@ const App = () => {
       return (
         <MovieDetailPage
           movieId={movieId[1]}
-          openMovieDetails={setCurrentPage}
+          openMovieDetails={navigate}
+          previousPage={previousPage}
           loading={loading}
           setLoading={setLoading}
         />
@@ -23,7 +32,7 @@ const App = () => {
     } else if (currentPage === 'search') {
       return (
         <SearchPage
-          openMovieDetails={setCurrentPage}
+          openMovieDetails={navigate}
           loading={loading}
           setLoading={setLoading}
         />
@@ -31,20 +40,16 @@ const App = () => {
     } else if (currentPage === 'catalog') {
       return (
         <CatalogPage
-          openMovieDetails={setCurrentPage}
+          openMovieDetails={navigate}
           loading={loading}
           setLoading={setLoading}
         />
       );
     } else {
-      return <LandingPage loading={loading} setLoading={setLoading} />; // added return
+      return <LandingPage />;
     }
   }
 
-  // The LandingPage is a full-viewport fullpage.js scroller and must own the
-  // entire screen from y=0. The other pages need top padding to clear the
-  // fixed header. Applying that padding to the landing page offsets fullpage's
-  // sections, which makes every scroll rest between two movies.
   const isLanding = !(
     currentPage.startsWith('movie/') ||
     currentPage === 'search' ||
@@ -53,7 +58,7 @@ const App = () => {
 
   return (
     <div className='min-h-screen bg-gray-900 text-white'>
-      <Header setCurrentPage={setCurrentPage} />
+      <Header currentPage={currentPage} setCurrentPage={navigate} />
       <div className={isLanding ? '' : 'pt-20 px-4'}>{renderPage()}</div>
     </div>
   );

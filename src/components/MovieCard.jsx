@@ -15,7 +15,6 @@ const MovieCard = ({ movieId, title, posterURL, rating, openMovieDetails }) => {
         <p className='text-gray-100 text-md sm:text-lg mt-2 leading-snug'>
           {title}
         </p>
-        {/* Hidden on mobile: the whole card is tappable there */}
         <button
           className='mt-3 hidden sm:inline-block px-4 py-2 bg-accent text-gray-900 font-semibold rounded hover:bg-accent-dark transition-colors duration-200 ease-out text-sm sm:text-base'
           onClick={() => openMovieDetails(`movie/${movieId}`)}

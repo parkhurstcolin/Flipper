@@ -1,8 +1,5 @@
 import PropTypes from 'prop-types';
 
-// Centered loading spinner in the app's accent color.
-// `inline` renders a smaller spinner for in-page "loading more" states;
-// otherwise it fills the screen.
 const Loading = ({ inline = false }) => {
   const wrapper = inline
     ? 'flex justify-center py-4'

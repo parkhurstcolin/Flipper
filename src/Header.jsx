@@ -1,26 +1,43 @@
-const Header = ({ setCurrentPage }) => {
+import PropTypes from 'prop-types';
+
+const Header = ({ currentPage, setCurrentPage }) => {
+  const navClass = (page) =>
+    `text-xl font-medium transition-colors duration-200 ease-out ${
+      currentPage === page ? 'text-accent' : 'text-white hover:text-accent'
+    }`;
+
   return (
-    <div className='fixed top-0 right-0 left-0 z-50 flex w-full items-center justify-between gap-4 bg-gray-900 bg-opacity-80 py-4 pr-4 md:pr-8 lg:pr-16 backdrop-blur-md'>
-      <a href='/Flipper/' className='flex' title='Dashboard'>
+    <header className='fixed top-0 right-0 left-0 z-50 flex w-full items-center justify-between gap-4 bg-gray-900/80 px-4 py-4 md:px-8 lg:px-16 backdrop-blur-md'>
+      <button onClick={() => setCurrentPage('landing')} className='flex' title='Home'>
         <img
           src='https://raw.githubusercontent.com/parkhurstcolin/Flipper/refs/heads/main/docs/assets/flipper.png'
+          alt='Flipper'
           width='96'
         />
-      </a>
-      <div className='flex flex-row items-center gap-4 md:gap-8 h-8 text-xl'>
-        <button title='catalog' onClick={() => setCurrentPage('catalog')}>
+      </button>
+      <nav className='flex flex-row items-center gap-4 md:gap-8'>
+        <button
+          title='Feed'
+          onClick={() => setCurrentPage('catalog')}
+          className={navClass('catalog')}
+        >
           Feed
         </button>
-        <button title='search' onClick={() => setCurrentPage('search')}>
+        <button
+          title='Search'
+          onClick={() => setCurrentPage('search')}
+          className={navClass('search')}
+        >
           Search
         </button>
-      </div>
-    </div>
+      </nav>
+    </header>
   );
 };
 
 Header.propTypes = {
-  setCurrentPage: () => {},
+  currentPage: PropTypes.string,
+  setCurrentPage: PropTypes.func,
 };
 
 export default Header;
