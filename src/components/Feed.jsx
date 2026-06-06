@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import MovieRow from '../components/MovieRow';
+import MovieRow from './MovieRow';
 import {
   fetchTrendingMovies,
   fetchPopularMovies,
@@ -32,9 +32,9 @@ const FEED_ROWS = [
   })),
 ];
 
-const CatalogPage = ({ openMovieDetails }) => {
+const Feed = ({ openMovieDetails }) => {
   return (
-    <div className='page-container space-y-8'>
+    <div className='space-y-8'>
       {FEED_ROWS.map((row) => (
         <MovieRow
           key={row.title}
@@ -47,8 +47,8 @@ const CatalogPage = ({ openMovieDetails }) => {
   );
 };
 
-CatalogPage.propTypes = {
+Feed.propTypes = {
   openMovieDetails: PropTypes.func,
 };
 
-export default CatalogPage;
+export default Feed;

@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import Header from './Header';
-import CatalogPage from './pages/CatalogPage';
 import SearchPage from './pages/SearchPage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import LandingPage from './pages/LandingPage';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [previousPage, setPreviousPage] = useState('catalog');
+  const [previousPage, setPreviousPage] = useState('search');
   const [loading, setLoading] = useState(false);
 
   const navigate = (page) => {
     if (page.startsWith('movie/') && !currentPage.startsWith('movie/')) {
-      setPreviousPage(currentPage === 'landing' ? 'catalog' : currentPage);
+      setPreviousPage(currentPage === 'landing' ? 'search' : currentPage);
     }
     setCurrentPage(page);
   };
@@ -30,36 +29,18 @@ const App = () => {
         />
       );
     } else if (currentPage === 'search') {
-      return (
-        <SearchPage
-          openMovieDetails={navigate}
-          loading={loading}
-          setLoading={setLoading}
-        />
-      );
-    } else if (currentPage === 'catalog') {
-      return (
-        <CatalogPage
-          openMovieDetails={navigate}
-          loading={loading}
-          setLoading={setLoading}
-        />
-      );
+      return <SearchPage openMovieDetails={navigate} />;
     } else {
       return <LandingPage />;
     }
   }
 
-  const isLanding = !(
-    currentPage.startsWith('movie/') ||
-    currentPage === 'search' ||
-    currentPage === 'catalog'
-  );
+  const isPadded = currentPage === 'search';
 
   return (
     <div className='min-h-screen bg-gray-900 text-white'>
       <Header currentPage={currentPage} setCurrentPage={navigate} />
-      <div className={isLanding ? '' : 'pt-20 px-4'}>{renderPage()}</div>
+      <div className={isPadded ? 'pt-28 px-4' : ''}>{renderPage()}</div>
     </div>
   );
 };

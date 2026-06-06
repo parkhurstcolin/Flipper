@@ -57,7 +57,7 @@ export const fetchMovieTeaser = async (movieId: string) => {
   }
 };
 
-export const fetchPopularMovies = async (page: number) => {
+export const fetchPopularMovies = async (page = 1) => {
   const options = {
     method: 'GET',
     url: `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
@@ -130,5 +130,65 @@ export const fetchWatchProviders = async (movieId: string) => {
   } catch (err) {
     console.error(err);
     return {};
+  }
+};
+
+export const fetchTrendingMovies = async (timeWindow = 'week') => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/trending/movie/${timeWindow}?language=en-US`,
+    headers,
+  };
+  try {
+    const res = await axios.request(options);
+    return res.data.results;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+export const fetchTopRatedMovies = async (page = 1) => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`,
+    headers,
+  };
+  try {
+    const res = await axios.request(options);
+    return res.data.results;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+export const fetchNowPlayingMovies = async (page = 1) => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`,
+    headers,
+  };
+  try {
+    const res = await axios.request(options);
+    return res.data.results;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+export const fetchMoviesByGenre = async (genreId: number, page = 1) => {
+  const options = {
+    method: 'GET',
+    url: `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&include_adult=false&language=en-US&page=${page}`,
+    headers,
+  };
+  try {
+    const res = await axios.request(options);
+    return res.data.results;
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 };

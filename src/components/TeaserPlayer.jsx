@@ -29,11 +29,7 @@ const TeaserPlayer = ({ videoKey }) => {
         playing ? "opacity-100" : "opacity-0"
       }`}
     >
-      <Youtube
-        videoId={videoKey}
-        opts={opts}
-        onPlay={() => setPlaying(true)}
-      />
+      <Youtube videoId={videoKey} opts={opts} onPlay={() => setPlaying(true)} />
     </div>
   );
 };

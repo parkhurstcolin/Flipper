@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Youtube from 'react-youtube';
 import ScrollRow from '../components/ScrollRow';
+import MoviePoster from '../components/MoviePoster';
 import Loading from '../components/Loading';
 import {
   fetchMovie,
@@ -74,7 +75,7 @@ const MovieDetailPage = ({
         />
         <div className='absolute inset-0 bg-gradient-to-b from-gray-900/50 via-gray-900/80 to-gray-900' />
 
-        <div className='relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-12'>
+        <div className='relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-12'>
           <button
             onClick={() => openMovieDetails(previousPage)}
             className='mb-8 inline-flex items-center gap-2 text-gray-300 hover:text-accent transition-colors duration-200 ease-out'
@@ -134,7 +135,7 @@ const MovieDetailPage = ({
                 </button>
               )}
 
-              <p className='mt-6 text-lg leading-relaxed text-gray-100'>
+              <p className='mt-6 text-lg leading-relaxed text-gray-200'>
                 {movie.overview}
               </p>
 
@@ -173,7 +174,7 @@ const MovieDetailPage = ({
                       className='h-32 w-24 rounded-lg object-cover'
                     />
                   ) : (
-                    <div className='flex h-32 w-24 items-center justify-center rounded-lg bg-gray-800 text-2xl text-gray-600'>
+                    <div className='flex h-32 w-24 items-center justify-center rounded-lg bg-gray-800 text-2xl text-gray-500'>
                       ?
                     </div>
                   )}
@@ -190,26 +191,11 @@ const MovieDetailPage = ({
             <h2 className='mb-4 text-2xl font-semibold'>Similar Movies</h2>
             <ScrollRow>
               {similarMovies.map((m) => (
-                <button
+                <MoviePoster
                   key={m.id}
+                  movie={m}
                   onClick={() => openMovieDetails(`movie/${m.id}`)}
-                  className='w-32 shrink-0 text-left'
-                >
-                  {m.poster_path ? (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w342/${m.poster_path}`}
-                      alt={m.title}
-                      className='h-48 w-32 rounded-lg object-cover transition duration-200 ease-out hover:brightness-110'
-                    />
-                  ) : (
-                    <div className='flex h-48 w-32 items-center justify-center rounded-lg bg-gray-800 p-2 text-center text-sm text-gray-500'>
-                      {m.title}
-                    </div>
-                  )}
-                  <p className='mt-2 line-clamp-2 text-sm font-medium'>
-                    {m.title}
-                  </p>
-                </button>
+                />
               ))}
             </ScrollRow>
           </section>

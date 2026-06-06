@@ -18,8 +18,8 @@ const Header = ({ currentPage, setCurrentPage }) => {
       <nav className='flex flex-row items-center gap-4 md:gap-8'>
         <button
           title='Feed'
-          onClick={() => setCurrentPage('catalog')}
-          className={navClass('catalog')}
+          onClick={() => setCurrentPage('landing')}
+          className={navClass('landing')}
         >
           Feed
         </button>

@@ -1,37 +1,31 @@
 import PropTypes from 'prop-types';
 
-const MovieCard = ({ movieId, title, posterURL, rating, openMovieDetails }) => {
+const MovieCard = ({ title, posterURL, rating }) => {
   return (
-    <div className='bg-gray-800 rounded-lg shadow w-full sm:w-56 cursor-pointer'>
-      <img
-        src={posterURL}
-        alt={title}
-        className='w-full h-48 sm:h-64 object-cover rounded-t-lg'
-      />
-      <div className='p-3 text-center'>
-        <span className='text-accent-light text-sm sm:text-md font-semibold'>
-          ⭐ {rating?.toFixed(1)} / 10
-        </span>
-        <p className='text-gray-100 text-md sm:text-lg mt-2 leading-snug'>
-          {title}
-        </p>
-        <button
-          className='mt-3 hidden sm:inline-block px-4 py-2 bg-accent text-gray-900 font-semibold rounded hover:bg-accent-dark transition-colors duration-200 ease-out text-sm sm:text-base'
-          onClick={() => openMovieDetails(`movie/${movieId}`)}
-        >
-          Open Details
-        </button>
+    <div className='group cursor-pointer'>
+      <div className='relative overflow-hidden rounded-lg bg-gray-800 shadow'>
+        <img
+          src={posterURL}
+          alt={title}
+          className='aspect-[2/3] w-full object-cover transition duration-200 ease-out group-hover:brightness-110'
+        />
+        {rating > 0 && (
+          <span className='absolute right-2 top-2 inline-flex items-center gap-1 rounded-md bg-black/70 px-2 py-1 text-xs font-semibold text-accent-light backdrop-blur-sm'>
+            ⭐ {rating.toFixed(1)}
+          </span>
+        )}
       </div>
+      <p className='mt-2 line-clamp-2 h-10 text-sm font-medium text-gray-200'>
+        {title}
+      </p>
     </div>
   );
 };
 
 MovieCard.propTypes = {
-  movieId: PropTypes.string,
   title: PropTypes.string,
   posterURL: PropTypes.string,
   rating: PropTypes.number,
-  openMovieDetails: PropTypes.func,
 };
 
 export default MovieCard;

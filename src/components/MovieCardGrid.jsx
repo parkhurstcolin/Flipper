@@ -39,24 +39,22 @@ const MovieCardGrid = ({ movies, openMovieDetails, loading, setPage}) => {
     }, [loading, setPage]);
 
     return (
-      <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 content-center'>
+      <div className='grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 mt-6'>
         {movies.map((movie, index) => (
           <div
             key={movie.id}
             tabIndex={-1}
-            className={`p-2 transition-transform duration-200 ease-out hover:scale-[1.03] ${
+            className={`transition-transform duration-200 ease-out hover:scale-[1.03] ${
               index === selectedIndex
-                ? 'scale-[1.03] ring-2 ring-accent rounded-md'
+                ? 'scale-[1.03] ring-2 ring-accent rounded-lg'
                 : ''
             }`}
             onClick={() => handleSelect(movie, 'confirm')}
           >
             <MovieCard
-              movieId={movie.id}
               title={movie.title}
               posterURL={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
               rating={movie.vote_average}
-              openMovieDetails={openMovieDetails}
             />
           </div>
         ))}
