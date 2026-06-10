@@ -25,12 +25,14 @@ const MovieDetailPage = ({
   const [providers, setProviders] = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function fetchMovieData() {
       setLoading(true);
+      setError(false);
       try {
         const [movieData, similar, credits, regionProviders, teasers] =
           await Promise.all([
@@ -47,6 +49,11 @@ const MovieDetailPage = ({
         setCast(credits.cast?.slice(0, 12) ?? []);
         setProviders(regionProviders?.US ?? null);
         setTrailerKey(teasers.length ? teasers[0].key : null);
+      } catch (err) {
+        if (!cancelled) {
+          console.error(err);
+          setError(true);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -61,6 +68,23 @@ const MovieDetailPage = ({
 
   if (loading) return <Loading />;
 
+  if (error) {
+    return (
+      <div className='flex min-h-screen flex-col items-center justify-center gap-6 bg-gray-900 text-white'>
+        <p className='text-lg text-gray-300'>
+          Couldn’t load this movie. Please try again.
+        </p>
+        <button
+          onClick={() => openMovieDetails(previousPage)}
+          className='inline-flex items-center gap-2 text-gray-300 hover:text-accent transition-colors duration-200 ease-out'
+        >
+          <span aria-hidden>←</span>{' '}
+          {previousPage === 'search' ? 'Back to Search' : 'Back to Feed'}
+        </button>
+      </div>
+    );
+  }
+
   const year = movie.release_date?.split('-')[0];
   const backLabel = previousPage === 'search' ? 'Back to Search' : 'Back to Feed';
 
@@ -69,9 +93,13 @@ const MovieDetailPage = ({
       <div className='relative'>
         <div
           className='absolute inset-0 bg-cover bg-center'
-          style={{
-            backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdrop_path})`,
-          }}
+          style={
+            movie.backdrop_path
+              ? {
+                  backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
+                }
+              : undefined
+          }
         />
         <div className='absolute inset-0 bg-gradient-to-b from-gray-900/50 via-gray-900/80 to-gray-900' />
 
@@ -84,11 +112,17 @@ const MovieDetailPage = ({
           </button>
 
           <div className='flex flex-col md:flex-row gap-8'>
-            <img
-              src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-              alt={movie.title}
-              className='w-full md:w-1/3 rounded-2xl shadow-2xl'
-            />
+            {movie.poster_path ? (
+              <img
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={movie.title}
+                className='w-full md:w-1/3 rounded-2xl shadow-2xl'
+              />
+            ) : (
+              <div className='flex aspect-[2/3] w-full items-center justify-center rounded-2xl bg-gray-800 text-gray-500 md:w-1/3'>
+                No poster
+              </div>
+            )}
             <div className='flex-1'>
               <h1 className='text-3xl md:text-4xl font-bold [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]'>
                 {movie.title}

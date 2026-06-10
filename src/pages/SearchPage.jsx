@@ -132,7 +132,6 @@ const SearchPage = ({ openMovieDetails }) => {
           openMovieDetails={openMovieDetails}
           movies={results}
           loading={searching}
-          setPage={setPage}
         />
       )}
     </div>

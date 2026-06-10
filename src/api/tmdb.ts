@@ -1,49 +1,38 @@
 import axios from "axios";
-const headers = {
-      accept: 'application/json',
-      Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
-    };
+
+const tmdb = axios.create({
+  baseURL: 'https://api.themoviedb.org/3',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
+  },
+  params: { language: 'en-US' },
+});
 
 export const fetchMovie = async (movieId: string) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${movieId}?language=en-US`,
-    headers,
-  };
-
   try {
-    const fetchedMovie = await axios.request(options);
-    return fetchedMovie.data;
+    const res = await tmdb.get(`/movie/${movieId}`);
+    return res.data;
   } catch (err) {
     throw new Error('Failed to find movie', { cause: err });
   }
 };
 
 export const searchMovies = async (query: string, page: number) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=${page}`,
-    headers,
-  };
-
   try {
-    const searchResults = await axios.request(options);
-    return searchResults.data.results;
+    const res = await tmdb.get('/search/movie', {
+      params: { query, include_adult: false, page },
+    });
+    return res.data.results;
   } catch (err) {
     throw new Error('No results found', { cause: err });
   }
 };
 
 export const fetchMovieTeaser = async (movieId: string) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
-    headers,
-  };
-
   try {
-    const searchResults = await axios.request(options);
-    const youtube = searchResults.data.results.filter(
+    const res = await tmdb.get(`/movie/${movieId}/videos`);
+    const youtube = res.data.results.filter(
       (video: { site: string }) => video.site === 'YouTube'
     );
     const teasers = youtube.filter(
@@ -58,15 +47,9 @@ export const fetchMovieTeaser = async (movieId: string) => {
 };
 
 export const fetchPopularMovies = async (page = 1) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
-    headers,
-  };
-
   try {
-    const popularMovies = await axios.request(options);
-    return popularMovies.data.results;
+    const res = await tmdb.get('/movie/popular', { params: { page } });
+    return res.data.results;
   } catch (err) {
     console.error(err);
     return [];
@@ -74,14 +57,9 @@ export const fetchPopularMovies = async (page = 1) => {
 };
 
 export const fetchMoviesGenre = async () => {
-  const options = {
-    method: 'GET',
-    url: 'https://api.themoviedb.org/3/genre/movie/list?language=en',
-    headers,
-  };
   try {
-    const genredMovieList = await axios.request(options);
-    return genredMovieList.data;
+    const res = await tmdb.get('/genre/movie/list');
+    return res.data;
   } catch (err) {
     console.error(err);
     return [];
@@ -89,14 +67,9 @@ export const fetchMoviesGenre = async () => {
 };
 
 export const fetchSimilarMovies = async (movieId: string) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${movieId}/similar?language=en-US`,
-    headers,
-  };
   try {
-    const fetchedMovies = await axios.request(options);
-    return fetchedMovies.data.results;
+    const res = await tmdb.get(`/movie/${movieId}/similar`);
+    return res.data.results;
   } catch (err) {
     console.error(err);
     return [];
@@ -104,14 +77,9 @@ export const fetchSimilarMovies = async (movieId: string) => {
 };
 
 export const fetchMovieCredits = async (movieId: string) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${movieId}/credits?language=en-US`,
-    headers,
-  };
   try {
-    const credits = await axios.request(options);
-    return credits.data;
+    const res = await tmdb.get(`/movie/${movieId}/credits`);
+    return res.data;
   } catch (err) {
     console.error(err);
     return { cast: [], crew: [] };
@@ -119,14 +87,9 @@ export const fetchMovieCredits = async (movieId: string) => {
 };
 
 export const fetchWatchProviders = async (movieId: string) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${movieId}/watch/providers`,
-    headers,
-  };
   try {
-    const providers = await axios.request(options);
-    return providers.data.results;
+    const res = await tmdb.get(`/movie/${movieId}/watch/providers`);
+    return res.data.results;
   } catch (err) {
     console.error(err);
     return {};
@@ -134,13 +97,8 @@ export const fetchWatchProviders = async (movieId: string) => {
 };
 
 export const fetchTrendingMovies = async (timeWindow = 'week') => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/trending/movie/${timeWindow}?language=en-US`,
-    headers,
-  };
   try {
-    const res = await axios.request(options);
+    const res = await tmdb.get(`/trending/movie/${timeWindow}`);
     return res.data.results;
   } catch (err) {
     console.error(err);
@@ -149,13 +107,8 @@ export const fetchTrendingMovies = async (timeWindow = 'week') => {
 };
 
 export const fetchTopRatedMovies = async (page = 1) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${page}`,
-    headers,
-  };
   try {
-    const res = await axios.request(options);
+    const res = await tmdb.get('/movie/top_rated', { params: { page } });
     return res.data.results;
   } catch (err) {
     console.error(err);
@@ -164,13 +117,8 @@ export const fetchTopRatedMovies = async (page = 1) => {
 };
 
 export const fetchNowPlayingMovies = async (page = 1) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`,
-    headers,
-  };
   try {
-    const res = await axios.request(options);
+    const res = await tmdb.get('/movie/now_playing', { params: { page } });
     return res.data.results;
   } catch (err) {
     console.error(err);
@@ -179,13 +127,15 @@ export const fetchNowPlayingMovies = async (page = 1) => {
 };
 
 export const fetchMoviesByGenre = async (genreId: number, page = 1) => {
-  const options = {
-    method: 'GET',
-    url: `https://api.themoviedb.org/3/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&include_adult=false&language=en-US&page=${page}`,
-    headers,
-  };
   try {
-    const res = await axios.request(options);
+    const res = await tmdb.get('/discover/movie', {
+      params: {
+        with_genres: genreId,
+        sort_by: 'popularity.desc',
+        include_adult: false,
+        page,
+      },
+    });
     return res.data.results;
   } catch (err) {
     console.error(err);

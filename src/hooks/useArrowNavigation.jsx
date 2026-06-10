@@ -1,45 +1,51 @@
 import { useCallback, useEffect, useState } from 'react';
 
 function getColumns(width) {
-  if (width >= 1280) return 4;
-  if (width >= 1024) return 3;
-  return 2;
+  if (width >= 1280) return 6;
+  if (width >= 1024) return 5;
+  if (width >= 640) return 4;
+  return 3;
 }
+
 export default function useArrowNavigation(items, handleSelect) {
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [columns, setColumns] = useState(getColumns(window.innerWidth));
+  const [columns, setColumns] = useState(() => getColumns(window.innerWidth));
 
   useEffect(() => {
     const handleResize = () => setColumns(getColumns(window.innerWidth));
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   const handleKeyDown = useCallback(
     (e) => {
       if (!items.length) return;
-      setSelectedIndex((prev = 0) => {
-        let newIndex = prev;
-        if (e.key === 'Enter' || e.key === ' ') {
-          if (prev != null && items[prev]) {
-            handleSelect(items[newIndex], 'confirm');
-          }
-        } else {
-          if (e.key === 'ArrowDown') {
-            newIndex = Math.min(prev + columns, items.length - 1);
-          } else if (e.key === 'ArrowUp') {
-            newIndex = Math.max(prev - columns, 0);
-          } else if (e.key === 'ArrowLeft') {
-            newIndex = Math.max(prev - 1, 0);
-          } else if (e.key === 'ArrowRight') {
-            newIndex = Math.min(prev + 1, items.length - 1);
-          }
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
+        return;
 
-          handleSelect(newIndex);
-          return newIndex;
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (selectedIndex != null && items[selectedIndex]) {
+          e.preventDefault();
+          handleSelect(items[selectedIndex], 'confirm');
         }
-      });
+        return;
+      }
+
+      const moves = {
+        ArrowDown: (i) => Math.min(i + columns, items.length - 1),
+        ArrowUp: (i) => Math.max(i - columns, 0),
+        ArrowLeft: (i) => Math.max(i - 1, 0),
+        ArrowRight: (i) => Math.min(i + 1, items.length - 1),
+      };
+      const move = moves[e.key];
+      if (!move) return;
+
+      e.preventDefault();
+      const next = move(selectedIndex ?? 0);
+      setSelectedIndex(next);
+      handleSelect(items[next]);
     },
-    [columns, items, handleSelect]
+    [columns, items, handleSelect, selectedIndex]
   );
 
   useEffect(() => {

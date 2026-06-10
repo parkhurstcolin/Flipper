@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Youtube from "react-youtube";
 
+const CHROME_FADE_MS = 3200; // YouTube hides its startup UI ~3s into playback
+
 const TeaserPlayer = ({ videoKey }) => {
   const [playing, setPlaying] = useState(false);
+  const revealTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(revealTimer.current), []);
+
+  const handlePlay = () => {
+    if (revealTimer.current) return;
+    revealTimer.current = setTimeout(() => setPlaying(true), CHROME_FADE_MS);
+  };
 
   const opts = {
     width: "100%",
@@ -29,7 +39,7 @@ const TeaserPlayer = ({ videoKey }) => {
         playing ? "opacity-100" : "opacity-0"
       }`}
     >
-      <Youtube videoId={videoKey} opts={opts} onPlay={() => setPlaying(true)} />
+      <Youtube videoId={videoKey} opts={opts} onPlay={handlePlay} />
     </div>
   );
 };

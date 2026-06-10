@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchMovieTeaser, fetchPopularMovies } from "../api/tmdb";
 import TeaserPlayer from "../components/TeaserPlayer";
 
-const SET_SIZE = 3; // keep 3 sets in memory (prev / current / next) = 9 videos
+const PLAY_RADIUS = 6; // sliding window of mounted, playing videos; active slide is the middle
+const FETCH_RADIUS = 11; // wider centered window where teaser keys are prefetched
+const SCROLL_MS = 650; // wheel-driven slide animation duration
+const UNLOCK_DELAY_MS = 150; // cooldown after a slide lands before the next flick registers
 
 const LandingPage = () => {
   const [slides, setSlides] = useState([]);
@@ -10,11 +13,13 @@ const LandingPage = () => {
 
   const slidesRef = useRef([]);
   const sectionRefs = useRef([]);
+  const containerRef = useRef(null);
   const pageRef = useRef(1);
   const loadingMoviesRef = useRef(false);
   const fetchedTeasers = useRef(new Set());
-
-  const currentSet = Math.floor(activeIndex / SET_SIZE);
+  const animatingRef = useRef(false);
+  const targetIndexRef = useRef(0);
+  const lastWheelRef = useRef({ time: 0, delta: 0 });
 
   const loadMovies = useCallback(async () => {
     if (loadingMoviesRef.current) return;
@@ -41,15 +46,15 @@ const LandingPage = () => {
   }, [loadMovies]);
 
   useEffect(() => {
-    if (slides.length > 0 && activeIndex >= slides.length - SET_SIZE * 2) {
+    if (slides.length > 0 && activeIndex >= slides.length - FETCH_RADIUS) {
       loadMovies();
     }
   }, [activeIndex, slides.length, loadMovies]);
 
   useEffect(() => {
     const all = slidesRef.current;
-    const first = Math.max(0, (currentSet - 1) * SET_SIZE);
-    const last = (currentSet + 2) * SET_SIZE - 1;
+    const first = Math.max(0, activeIndex - FETCH_RADIUS);
+    const last = activeIndex + FETCH_RADIUS;
     for (let i = first; i <= last && i < all.length; i++) {
       const slide = all[i];
       if (!slide || fetchedTeasers.current.has(slide.movie.id)) continue;
@@ -59,12 +64,86 @@ const LandingPage = () => {
         .then((teasers) => {
           const videoKey = teasers.length ? teasers[0].key : null;
           setSlides((prev) =>
-            prev.map((s) => (s.movie.id === id ? { ...s, videoKey } : s))
+            prev.map((s) => (s.movie.id === id ? { ...s, videoKey } : s)),
           );
         })
         .catch(() => fetchedTeasers.current.delete(id));
     }
-  }, [currentSet, slides.length]);
+  }, [activeIndex, slides.length]);
+
+  useEffect(() => {
+    if (!animatingRef.current) targetIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let unlockTimer;
+    let rafId;
+    const settle = () => {
+      animatingRef.current = false;
+    };
+
+    const onScrollEnd = () => {
+      clearTimeout(unlockTimer);
+      unlockTimer = setTimeout(settle, UNLOCK_DELAY_MS);
+    };
+
+    const animateTo = (top) => {
+      cancelAnimationFrame(rafId);
+      el.style.scrollSnapType = "none";
+      const from = el.scrollTop;
+      const change = top - from;
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - start) / SCROLL_MS, 1);
+        el.scrollTop = from + change * (1 - Math.pow(1 - t, 3));
+        if (t < 1) rafId = requestAnimationFrame(step);
+        else el.style.scrollSnapType = "";
+      };
+      rafId = requestAnimationFrame(step);
+    };
+
+    const onWheel = (e) => {
+      e.preventDefault();
+
+      const now = performance.now();
+      const { time, delta } = lastWheelRef.current;
+      lastWheelRef.current = { time: now, delta: e.deltaY };
+
+      if (animatingRef.current) return;
+      if (Math.abs(e.deltaY) < 4) return;
+
+      const isNewGesture =
+        now - time > 150 || Math.abs(e.deltaY) > Math.abs(delta) + 1;
+      if (!isNewGesture) return;
+
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const next = Math.min(
+        Math.max(targetIndexRef.current + dir, 0),
+        slidesRef.current.length - 1,
+      );
+      if (next === targetIndexRef.current) return;
+
+      targetIndexRef.current = next;
+      animatingRef.current = true;
+      const section = sectionRefs.current[next];
+      animateTo(section ? section.offsetTop : next * el.clientHeight);
+      clearTimeout(unlockTimer);
+      unlockTimer = setTimeout(settle, SCROLL_MS + 400);
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("scrollend", onScrollEnd);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("scrollend", onScrollEnd);
+      clearTimeout(unlockTimer);
+      cancelAnimationFrame(rafId);
+      el.style.scrollSnapType = "";
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -75,16 +154,20 @@ const LandingPage = () => {
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.6 },
     );
     sectionRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, [slides.length]);
 
   return (
-    <div className="no-scrollbar h-screen w-full overflow-y-scroll snap-y snap-mandatory">
+    <div
+      ref={containerRef}
+      className="no-scrollbar h-screen w-full overflow-y-scroll snap-y snap-mandatory"
+    >
       {slides.map(({ movie, videoKey }, i) => {
-        const inWindow = Math.abs(Math.floor(i / SET_SIZE) - currentSet) <= 1;
+        const inWindow = Math.abs(i - activeIndex) <= PLAY_RADIUS;
+
         return (
           <section
             key={movie.id}
